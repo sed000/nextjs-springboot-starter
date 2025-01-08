@@ -27,6 +27,7 @@ public class UserService {
     public User register(User user) {
         if (userRepository.findByUsername(user.getUsername()) == null) {
             user.setPassword(encoder.encode(user.getPassword()));
+            user.setEmail(user.getEmail());
             userRepository.save(user);
         } else {
             System.out.println("Username is taken");
@@ -37,7 +38,8 @@ public class UserService {
     public String verify(User user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername());
+            User userVerified = userRepository.findByUsername(user.getUsername());
+            return jwtService.generateToken(userVerified.getUsername(), userVerified.getEmail(), userVerified.isVerified(), userVerified.getVerificationCode());
         } else {
             return "Login failed";
         }

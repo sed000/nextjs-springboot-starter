@@ -11,6 +11,12 @@ public class User {
     private String username;
     @Column(nullable = false, name = "password")
     private String password;
+    @Column(unique = true, nullable = false, name = "email")
+    private String email;
+    @Column(name = "verificationCode")
+    private String verificationCode;
+
+    private boolean isVerified = false;
 
     public String getId() {
         return id;
@@ -36,12 +42,26 @@ public class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }

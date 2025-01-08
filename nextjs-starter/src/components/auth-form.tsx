@@ -14,6 +14,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { login, register } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export function AuthForm({
   className,
@@ -25,16 +26,25 @@ export function AuthForm({
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { toast } = useToast();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
       const response = isLogin
         ? await login(username, password)
-        : await register(username, password);
+        : await register(username, password, email);
       if (response.error) {
         setError(response.error);
       } else {
+        if (!isLogin) {
+          //TODO
+          toast({
+            title: "Success",
+            description:
+              "You have been registered, check your email for verification code",
+          });
+        }
         router.push("/");
       }
     } catch (err) {

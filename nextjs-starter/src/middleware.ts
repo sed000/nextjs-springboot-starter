@@ -17,6 +17,10 @@ EXAMPLE: Redirect to login page if token is not present
   return NextResponse.next();
   */
 
+  if (!token && req.nextUrl.pathname.startsWith("/profile")) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   if (token && req.nextUrl.pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/", req.url));
   }

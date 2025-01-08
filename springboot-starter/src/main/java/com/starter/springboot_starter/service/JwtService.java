@@ -30,13 +30,15 @@ public class JwtService {
         }
     }
 
-    public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
+    public String generateToken(String username, String email, Boolean isVerified, String verificationCode) {
         return Jwts.builder()
-                .addClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 30 * 3000))
+                .claim("username", username)
+                .claim("email", email)
+                .claim("isVerified", isVerified)
+                .claim("verificationCode", verificationCode)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30 * 3000))
                 .signWith(getKey())
                 .compact();
     }
@@ -63,8 +65,8 @@ public class JwtService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String username = extractUserName(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

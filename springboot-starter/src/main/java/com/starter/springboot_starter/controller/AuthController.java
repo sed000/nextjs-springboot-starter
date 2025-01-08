@@ -1,6 +1,9 @@
 package com.starter.springboot_starter.controller;
 
+import com.resend.core.exception.ResendException;
+import com.starter.springboot_starter.model.Email;
 import com.starter.springboot_starter.model.User;
+import com.starter.springboot_starter.service.EmailService;
 import com.starter.springboot_starter.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthController {
     private final UserService userService;
-    public AuthController(UserService userService) {
+    private final EmailService emailService;
+    public AuthController(UserService userService, EmailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/login")
@@ -18,7 +23,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public User register(@RequestBody User user) throws ResendException {
+        userService.register(user);
+        emailService.sendEmail(user.getEmail());
+        return user;
     }
+
+    @PostMapping("/verification")
+    public void verifyCode(@RequestBody Email email) throws ResendException {
+        emailService.verifyCode(email.getEmail(), email.getVerificationCode());
+    }
+
+
+
 }
